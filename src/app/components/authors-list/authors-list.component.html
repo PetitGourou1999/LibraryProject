@@ -1,0 +1,80 @@
+<div class="myContainer">
+    <table class="table table-hover table-bordered" id="datatableexample">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Age</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+
+            <tr *ngFor="let group of listUsers">
+                <td>{{group.id}}</td>
+                <td>{{group.firstname}}</td>
+                <td>{{group.surname}}</td>
+                <td>{{group.age}}</td>
+
+                <td>
+                    <button class="btn btn-warning actionButton" (click)="editUser(group.id)" data-bs-toggle="modal"
+                        data-bs-target="#editModal"> Editer <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-danger actionButton" (click)="deleteUser(group.id)" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal">
+                        Supprimer <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content myModalContent">
+                <form [formGroup]="editForm" (ngSubmit)="onSubmitEdit()">
+
+                    <div class="mb-3">
+                        <label for="firstname" class="form-label">
+                            Firstname
+                        </label>
+                        <input class="form-control" id="firstname" type="text" formControlName="firstname">
+                    </div>
+
+                    <div class="field">
+                        <label for="surname" class="form-label">
+                            Surname
+                        </label>
+                        <input class="form-control" id="surname" type="text" formControlName="surname">
+                    </div>
+
+                    <div class="field">
+                        <label for="age" class="form-label">
+                            Age
+                        </label>
+                        <input class="form-control" id="age" type="number" formControlName="age">
+                    </div>
+                    <div class="field"><button class="btn btn-primary" type="submit" data-bs-dismiss="modal"
+                            (onClick)="onSubmitEdit()">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content myModalContent">
+                <div class="modal-body">
+                    <p>Voulez-vous vraiement supprimer cet auteur ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" (click)="onSubmitDelete()"
+                        data-bs-dismiss="modal">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

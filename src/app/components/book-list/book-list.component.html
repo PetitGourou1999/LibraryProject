@@ -1,0 +1,68 @@
+<div class="myContainer">
+    <table class="table table-hover table-bordered" id="datatableexample">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Auteur</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let group of listBooks">
+                <td>{{group.id}}</td>
+                <td>{{group.title}}</td>
+                <td>{{group.author.firstname}} {{group.author.surname}}</td>
+                <td>
+                    <button class="btn btn-warning actionButton" (click)="editBook(group.id)" data-bs-toggle="modal"
+                        data-bs-target="#editModal"> Editer <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-danger actionButton" (click)="deleteBook(group.id)" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal">
+                        Supprimer <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content myModalContent">
+                <form [formGroup]="editForm" (ngSubmit)="onSubmitEdit()">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            Titre
+                        </label>
+                        <input class="form-control" id="title" type="text" formControlName="title">
+                    </div>
+
+                    <div class="field">
+                        <label for="authors" class="form-label">
+                            Auteur
+                        </label>
+                        <select class="form-control" formControlName="authors" id="authors">
+                            <option *ngFor="let author of authors; let i = index" [ngValue]="authors[i]">
+                                {{authors[i].firstname}} {{authors[i].surname}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="field"><button class="btn btn-primary" type="submit" data-bs-dismiss="modal"
+                            (onClick)="onSubmitEdit()">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content myModalContent">
+                <div class="modal-body">
+                    <p>Voulez-vous vraiement supprimer ce livre ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" (click)="onSubmitDelete()"
+                        data-bs-dismiss="modal">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>

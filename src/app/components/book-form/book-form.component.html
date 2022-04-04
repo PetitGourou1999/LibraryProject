@@ -1,0 +1,25 @@
+<div class="myContainer">
+    <h3>Ajouter un Livre : </h3>
+    <form [formGroup]="bookForm" (ngSubmit)="onSubmit()">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">
+                Titre
+            </label>
+            <input class="form-control" id="title" type="text" formControlName="title">
+        </div>
+
+        <div class="field">
+            <label for="authors" class="form-label">
+                Auteur
+            </label>
+            <select class="form-control" formControlName="authors" id="authors">
+                <option *ngFor="let author of authors; let i = index" [ngValue]="authors[i]">
+                    {{authors[i].firstname}} {{authors[i].surname}}
+                </option>
+            </select>
+        </div>
+        <div class="field"><button class="btn btn-primary" type="submit" (onClick)="onSubmit()">Enregistrer</button>
+        </div>
+    </form>
+</div>
