@@ -21,6 +21,7 @@ export class BookListComponent implements OnInit {
   bookData: Book = {
     id: 1,
     title: '',
+    nbexemplaires: 0,
     author: {
       id: 1,
       firstname: '',
@@ -32,6 +33,7 @@ export class BookListComponent implements OnInit {
   formBuilder: FormBuilder = new FormBuilder();
   editForm = this.formBuilder.group({
     title: '',
+    nbexemplaires: 0,
     authors: [''],
   });
 
@@ -59,6 +61,9 @@ export class BookListComponent implements OnInit {
     this.bookService.getSingleBook(id).subscribe((data) => {
       this.bookData = data;
       this.editForm.controls['title'].setValue(this.bookData.title);
+      this.editForm.controls['nbexemplaires'].setValue(
+        this.bookData.nbexemplaires
+      );
       this.editForm.controls['authors'].patchValue(this.authors[0]);
     });
   }
@@ -70,28 +75,34 @@ export class BookListComponent implements OnInit {
   }
 
   onSubmitDelete() {
-    this.bookService.deleteBook(this.bookData.id);
-    this.updateBooklist();
+    this.bookService.deleteBook(this.bookData.id).subscribe((data) => {
+      this.updateBooklist();
+    });
   }
 
   onSubmitEdit(): void {
     this.bookData.title = this.editForm.get('title')?.value;
+    this.bookData.nbexemplaires = this.editForm.get('nbexemplaires')?.value;
     this.bookData.author = this.editForm.get('authors')?.value;
 
-    if (this.bookData.title.trim() != '') {
-      this.bookService.updateBook(this.bookData.id, this.bookData).subscribe();
-      this.bookData = {
-        id: 1,
-        title: '',
-        author: {
-          id: 1,
-          firstname: '',
-          surname: '',
-          age: 0,
-        },
-      };
-      alert('Le livre a bien été modifié');
-      this.updateBooklist();
+    if (this.bookData.title.trim() != '' && this.bookData.nbexemplaires >= 0) {
+      this.bookService
+        .updateBook(this.bookData.id, this.bookData)
+        .subscribe((data) => {
+          this.bookData = {
+            id: 1,
+            title: '',
+            nbexemplaires: 0,
+            author: {
+              id: 1,
+              firstname: '',
+              surname: '',
+              age: 0,
+            },
+          };
+          alert('Le livre a bien été modifié');
+          this.updateBooklist();
+        });
     } else {
       alert("L'un des champs n'a pas été renseigné");
     }
@@ -100,6 +111,33 @@ export class BookListComponent implements OnInit {
   updateBooklist(): void {
     this.bookService.getBooks().subscribe((data) => {
       this.listBooks = data;
+    });
+  }
+
+  onClickExemplaire(count: number, id: number): void {
+    this.bookService.getSingleBook(id).subscribe((data) => {
+      this.bookData = data;
+      if (!(count == -1 && this.bookData.nbexemplaires == 0)) {
+        this.bookData.nbexemplaires += count;
+      }
+
+      this.bookService
+        .updateBook(this.bookData.id, this.bookData)
+        .subscribe((data) => {
+          this.bookData = {
+            id: 1,
+            title: '',
+            nbexemplaires: 0,
+            author: {
+              id: 1,
+              firstname: '',
+              surname: '',
+              age: 0,
+            },
+          };
+
+          this.updateBooklist();
+        });
     });
   }
 }

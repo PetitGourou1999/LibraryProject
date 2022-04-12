@@ -49,8 +49,9 @@ export class AuthorsListComponent implements OnInit {
   }
 
   onSubmitDelete() {
-    this.userService.deleteUser(this.userData.id);
-    this.updateUserlist();
+    this.userService.deleteUser(this.userData.id).subscribe((data) => {
+      this.updateUserlist();
+    });
   }
 
   onSubmitEdit(): void {
@@ -63,16 +64,18 @@ export class AuthorsListComponent implements OnInit {
       this.userData.firstname.trim() != '' &&
       this.userData.surname.trim() != ''
     ) {
-      this.userService.updateUser(this.userData.id, this.userData).subscribe();
-      this.userData = {
-        id: 1,
-        firstname: '',
-        surname: '',
-        age: 0,
-      };
-      alert("L'utilisateur a bien été modifié");
-      this.updateUserlist();
-      //TODO : remove manuellement du tableau
+      this.userService
+        .updateUser(this.userData.id, this.userData)
+        .subscribe((data) => {
+          this.userData = {
+            id: 1,
+            firstname: '',
+            surname: '',
+            age: 0,
+          };
+          alert("L'utilisateur a bien été modifié");
+          this.updateUserlist();
+        });
     } else {
       alert("L'un des champs n'a pas été renseigné");
     }

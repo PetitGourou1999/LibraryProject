@@ -21,6 +21,7 @@ export class BookFormComponent implements OnInit {
   newBook: Book = {
     id: 1,
     title: '',
+    nbexemplaires: 0,
     author: {
       id: 1,
       firstname: '',
@@ -36,6 +37,7 @@ export class BookFormComponent implements OnInit {
     this.bookService = bookService;
     this.bookForm = this.formBuilder.group({
       title: '',
+      nbexemplaires: 0,
       authors: [''],
     });
 
@@ -55,6 +57,7 @@ export class BookFormComponent implements OnInit {
 
   onSubmit(): void {
     this.newBook.title = this.bookForm.get('title')?.value;
+    this.newBook.nbexemplaires = this.bookForm.get('nbexemplaires')?.value;
     this.newBook.author = this.bookForm.get('authors')?.value;
 
     if (this.newBook.title.trim() != '') {
@@ -64,6 +67,7 @@ export class BookFormComponent implements OnInit {
       this.newBook = {
         id: 1,
         title: '',
+        nbexemplaires: 0,
         author: {
           id: 1,
           firstname: '',

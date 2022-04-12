@@ -42,12 +42,11 @@ export class BookService {
       .pipe(catchError(this.handleError<Book>('book', new Book())));
   }
 
-  deleteBook(id: number): void {
+  deleteBook(id: number): Observable<Book> {
     const url = `${this.rootURL}/books/${id}`;
-    this.http
+    return this.http
       .delete<Book>(url)
-      .pipe(catchError(this.handleError<Book>('deleteBook', new Book())))
-      .subscribe();
+      .pipe(catchError(this.handleError<Book>('deleteBook', new Book())));
   }
 
   updateBook(id: number, book: Book): Observable<Book> {

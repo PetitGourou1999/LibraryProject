@@ -5,6 +5,8 @@
                 <th>ID</th>
                 <th>Titre</th>
                 <th>Auteur</th>
+                <th>Nb. Exemplaires</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -12,6 +14,18 @@
                 <td>{{group.id}}</td>
                 <td>{{group.title}}</td>
                 <td>{{group.author.firstname}} {{group.author.surname}}</td>
+
+                <td>
+                    <button type="button" class="btn btn-danger btn-xs hidden-xs "
+                        (click)="onClickExemplaire(-1, group.id)">
+                        -
+                    </button>
+                    <span class="nbexemplaires">{{group.nbexemplaires}}</span>
+                    <button type="button" class="btn btn-success btn-xs hidden-xs "
+                        (click)="onClickExemplaire(1, group.id)">
+                        +
+                    </button>
+                </td>
                 <td>
                     <button class="btn btn-warning actionButton" (click)="editBook(group.id)" data-bs-toggle="modal"
                         data-bs-target="#editModal"> Editer <i class="fas fa-edit"></i>
@@ -34,7 +48,12 @@
                         </label>
                         <input class="form-control" id="title" type="text" formControlName="title">
                     </div>
-
+                    <div class="mb-3">
+                        <label for="nbexemplaires" class="form-label">
+                            Nb. Exemplaires en stock
+                        </label>
+                        <input class="form-control" id="nbexemplaires" type="number" formControlName="nbexemplaires">
+                    </div>
                     <div class="field">
                         <label for="authors" class="form-label">
                             Auteur

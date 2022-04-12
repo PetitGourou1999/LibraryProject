@@ -41,12 +41,11 @@ export class AuthorService {
       .pipe(catchError(this.handleError<Author>('author', new Author())));
   }
 
-  deleteUser(id: number): void {
+  deleteUser(id: number): Observable<Author> {
     const url = `${this.rootURL}/authors/${id}`;
-    this.http
+    return this.http
       .delete<Author>(url)
-      .pipe(catchError(this.handleError<Author>('deleteAuthor', new Author())))
-      .subscribe();
+      .pipe(catchError(this.handleError<Author>('deleteAuthor', new Author())));
   }
 
   updateUser(id: number, author: Author): Observable<Author> {
