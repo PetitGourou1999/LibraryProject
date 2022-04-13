@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { NGXLogger } from 'ngx-logger';
 import { catchError, Observable, of } from 'rxjs';
 import { Author } from './../../models/author';
 @Injectable({
@@ -18,23 +19,28 @@ export class AuthorService {
 
   users: Author[] = [];
 
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient, private logger: NGXLogger) {
     this.http = http;
   }
 
   addUser(usr: Author): Observable<Author> {
+    this.logger.debug(
+      'Adding a new Auhtor : ' + usr.firstname + ' ' + usr.surname
+    );
     return this.http
       .post<Author>(this.rootURL + '/authors', usr)
       .pipe(catchError(this.handleError('addAuthor', usr)));
   }
 
   getUsers(): Observable<Author[]> {
+    this.logger.debug('Retrieving Auhtors');
     return this.http
       .get<Author[]>(this.rootURL + '/authors')
       .pipe(catchError(this.handleError<Author[]>('authors', [])));
   }
 
   getSingleUser(id: number): Observable<Author> {
+    this.logger.debug('Retrieving Auhtor By Id : ' + id.toString());
     const url = `${this.rootURL}/authors/${id}`;
     return this.http
       .get<Author>(url)
@@ -42,6 +48,7 @@ export class AuthorService {
   }
 
   deleteUser(id: number): Observable<Author> {
+    this.logger.debug('Deleting Auhtor By Id : ' + id.toString());
     const url = `${this.rootURL}/authors/${id}`;
     return this.http
       .delete<Author>(url)
@@ -49,6 +56,14 @@ export class AuthorService {
   }
 
   updateUser(id: number, author: Author): Observable<Author> {
+    this.logger.debug(
+      'Update Auhtor By Id : ' +
+        id.toString() +
+        ' : ' +
+        author.firstname +
+        ' ' +
+        author.surname
+    );
     const url = `${this.rootURL}/authors/${id}`;
     return this.http
       .patch<Author>(url, author)
@@ -58,10 +73,16 @@ export class AuthorService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      this.logger.error(error);
 
       // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
+      this.logger.error(`${operation} failed: ${error.message}`);
+
+      if (error.status === 403) {
+        throw new Error(
+          "Vous n'êtes pas autorisés à effectuer cette opération"
+        );
+      }
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

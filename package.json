@@ -22,6 +22,8 @@
     "jquery": "^3.6.0",
     "keycloak-angular": "^9.1.0",
     "keycloak-js": "^16.1.1",
+    "moment": "^2.29.2",
+    "ngx-logger": "^5.0.9",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

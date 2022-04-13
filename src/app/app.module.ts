@@ -3,6 +3,7 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthorsFormComponent } from './components/authors-form/authors-form.component';
 import { AuthorsListComponent } from './components/authors-list/authors-list.component';
@@ -28,6 +29,12 @@ import { initializeKeycloak } from './init/keycloak-init.factory';
     ReactiveFormsModule,
     KeycloakAngularModule,
     HttpClientModule,
+    LoggerModule.forRoot({
+      serverLoggingUrl: 'http://localhost:5001/', // Replace with YOUR API
+      level: NgxLoggerLevel.TRACE,
+      serverLogLevel: NgxLoggerLevel.TRACE,
+      disableConsoleLogging: false,
+    }),
   ],
   providers: [
     {

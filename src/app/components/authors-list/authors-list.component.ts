@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { catchError, Observable, of } from 'rxjs';
 import { AuthorService } from 'src/app/services/authors/author.service';
 import { Author } from '../../models/author';
 
@@ -34,24 +35,33 @@ export class AuthorsListComponent implements OnInit {
   ngOnInit(): void {}
 
   editUser(id: number) {
-    this.userService.getSingleUser(id).subscribe((data) => {
-      this.userData = data;
-      this.editForm.controls['firstname'].setValue(this.userData.firstname);
-      this.editForm.controls['surname'].setValue(this.userData.surname);
-      this.editForm.controls['age'].setValue(this.userData.age);
-    });
+    this.userService
+      .getSingleUser(id)
+      .pipe(catchError(this.handleError<Author>(new Author())))
+      .subscribe((data) => {
+        this.userData = data;
+        this.editForm.controls['firstname'].setValue(this.userData.firstname);
+        this.editForm.controls['surname'].setValue(this.userData.surname);
+        this.editForm.controls['age'].setValue(this.userData.age);
+      });
   }
 
   deleteUser(id: number) {
-    this.userService.getSingleUser(id).subscribe((data) => {
-      this.userData = data;
-    });
+    this.userService
+      .getSingleUser(id)
+      .pipe(catchError(this.handleError<Author>(new Author())))
+      .subscribe((data) => {
+        this.userData = data;
+      });
   }
 
   onSubmitDelete() {
-    this.userService.deleteUser(this.userData.id).subscribe((data) => {
-      this.updateUserlist();
-    });
+    this.userService
+      .deleteUser(this.userData.id)
+      .pipe(catchError(this.handleError<Author>(new Author())))
+      .subscribe((data) => {
+        this.updateUserlist();
+      });
   }
 
   onSubmitEdit(): void {
@@ -66,6 +76,7 @@ export class AuthorsListComponent implements OnInit {
     ) {
       this.userService
         .updateUser(this.userData.id, this.userData)
+        .pipe(catchError(this.handleError<Author>(new Author())))
         .subscribe((data) => {
           this.userData = {
             id: 1,
@@ -73,7 +84,6 @@ export class AuthorsListComponent implements OnInit {
             surname: '',
             age: 0,
           };
-          alert("L'utilisateur a bien été modifié");
           this.updateUserlist();
         });
     } else {
@@ -82,8 +92,20 @@ export class AuthorsListComponent implements OnInit {
   }
 
   updateUserlist(): void {
-    this.userService.getUsers().subscribe((data) => {
-      this.listUsers = data;
-    });
+    this.userService
+      .getUsers()
+      .pipe(catchError(this.handleError<Author[]>([])))
+      .subscribe((data) => {
+        this.listUsers = data;
+      });
+  }
+
+  private handleError<T>(result?: T) {
+    return (error: any): Observable<T> => {
+      alert("Vous n'avez pas les droits pour effectuer cette opération");
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
   }
 }
