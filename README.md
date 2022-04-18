@@ -93,6 +93,42 @@ Voici la page en question :
 
 <img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163792661-7e6283d7-b324-46f0-afb3-e84de5d12c8a.png">
 
+Dans le fichier app-routong.module.ts, on n'a alors plus qu'à spéciier qui peut accéder à quelle page :
+
+```
+const routes: Routes = [
+  {
+    path: 'authors/create',
+    component: AuthorsFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['simple-admin'] },
+  },
+  {
+    path: 'authors/list',
+    component: AuthorsListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['simple-user'] },
+  },
+  {
+    path: 'books/create',
+    component: BookFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['simple-admin'] },
+  },
+  {
+    path: 'books/list',
+    component: BookListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['simple-user'] },
+  },
+  {
+    path: 'not-authorized',
+    component: NotAuthorizedComponent,
+  },
+  { path: '**', redirectTo: 'authors/list' },
+];
+```
+
 On pourra ensuite consulter la liste des auteurs :
 
 <img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163791570-6bf2caea-2e56-48c9-8443-9152374e5d22.png">
