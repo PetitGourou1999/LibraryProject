@@ -145,7 +145,7 @@ Et on retrouve des interfaces analogues pour créer des livres ou en consulter l
 
 ## Envoi de logs
 
-Afin de centraliser les logs de l'application grâce à la stack ELK, nous utilisons NGXLogger que nous configurons comme suit :
+Afin de centraliser les logs de l'application grâce à la stack ELK, nous utilisons NGXLogger que nous configurons comme suit pour envoyer les logs vers Logstash sur le port 5001 :
 
 ```
 @NgModule({
