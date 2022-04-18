@@ -143,5 +143,44 @@ Et on retrouve des interfaces analogues pour créer des livres ou en consulter l
 
 <img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163791799-2d3776f8-b48a-4210-9c2b-21ad69f5790d.png">
 
+## Envoi de logs
+
+Afin de centraliser les logs de l'application grâce à la stack ELK, nous utilisons NGXLogger que nous configurons comme suit :
+
+```
+@NgModule({
+  declarations: [
+    AppComponent,
+    AuthorsFormComponent,
+    AuthorsListComponent,
+    BookFormComponent,
+    BookListComponent,
+    NotAuthorizedComponent,
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    KeycloakAngularModule,
+    HttpClientModule,
+    LoggerModule.forRoot({
+      serverLoggingUrl: 'http://localhost:5001/', // Replace with YOUR API
+      level: NgxLoggerLevel.TRACE,
+      serverLogLevel: NgxLoggerLevel.TRACE,
+      disableConsoleLogging: false,
+    }),
+  ],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService],
+    },
+  ],
+  bootstrap: [AppComponent],
+})
+
 
 
