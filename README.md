@@ -1,27 +1,111 @@
-# LoginProject
+# LibraryProject
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.6.
 
-## Development server
+## Présentation
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Ce projet à pour but de présenter aux utilisateurs une interface web permettant de réaliser des opération CRUD sur une base de données de livres et d'auteurs. Ce projet a été réalisé à l'aide du framework Angular et de Bootstrap afin d'appliquer facilement des styles aux différents composants de l'UI.
 
-## Code scaffolding
+Afin d'accéder à l'application, il est nécessaire d'avoir un compte utilisateur dans Keycloak. Nous devons pour cela initialiser la liaison avec Keycloak comme suit :
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+````
+export function initializeKeycloak(
+  keycloak: KeycloakService
+): () => Promise<boolean> {
+  return () =>
+    keycloak.init({
+      config: {
+        url: 'http://localhost:8080' + '/auth',
+        realm: 'MonSuperRoyaume',
+        clientId: 'MyApplicationAngular',
+      },
+      initOptions: {
+        /*onLoad: 'check-sso',
+        silentCheckSsoRedirectUri:
+          window.location.origin + '../../assets/silent-check-sso.html',*/
+        onLoad: 'login-required',
+        flow: 'standard',
+        checkLoginIframe: true,
+      },
+    });
+}
+```
 
-## Build
+Contenu du fichier assets/silent-check-sso.html :
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```
+<html>
 
-## Running unit tests
+<body>
+    <script>
+        parent.postMessage(location.href, location.origin);
+    </script>
+</body>
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+</html>
+```
 
-## Running end-to-end tests
+Lorsque l'on voudra accéder à l'application, on se retrouvera face à la mire de connexion Keycloak :
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+<img width="884" alt="image" src="https://user-images.githubusercontent.com/56508650/163791432-5931b131-1888-4201-a322-2ab9bc260fbe.png">
 
-## Further help
+Grâce à la classe AuthGuard, on peut, sur chaque page, invoquer la mire de connexion et avoir accès aux droits de l'utilisateur et, dans le cas où il n'a pas les droits d'accéder à la page (création de livre ou d'auteur pour les utilisateurs ayant le rôle "simple-user"), afficher une UI spécifique :
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthGuard extends KeycloakAuthGuard {
+  constructor(
+    protected override readonly router: Router,
+    protected readonly keycloak: KeycloakService
+  ) {
+    super(router, keycloak);
+  }
+
+  async isAccessAllowed(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Promise<boolean | UrlTree> {
+    if (!this.authenticated) {
+      await this.keycloak.login({
+        redirectUri: window.location.origin + state.url,
+      });
+    }
+
+    const requiredRoles = route.data['roles'];
+
+    if (!(requiredRoles instanceof Array) || requiredRoles.length == 0) {
+      return true;
+    }
+
+    if (!requiredRoles.every((role) => this.roles.includes(role))) {
+      this.router.navigate(['/not-authorized']);
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+```
+
+Voici la page en question :
+
+<img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163792661-7e6283d7-b324-46f0-afb3-e84de5d12c8a.png">
+
+On pourra ensuite consulter la liste des auteurs :
+
+<img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163791570-6bf2caea-2e56-48c9-8443-9152374e5d22.png">
+
+On peut également créer des auteurs :
+
+<img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163791685-0635e6eb-8fbb-49bd-9f5c-5ecf3a3d1d95.png">
+
+Et on retrouve des interfaces analogues pour créer des livres ou en consulter la liste :
+
+<img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163791759-3654f87a-a061-4e7c-b2f4-843211931d15.png">
+
+<img width="1788" alt="image" src="https://user-images.githubusercontent.com/56508650/163791799-2d3776f8-b48a-4210-9c2b-21ad69f5790d.png">
+
+
+
