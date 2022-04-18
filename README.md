@@ -8,7 +8,7 @@ Ce projet à pour but de présenter aux utilisateurs une interface web permettan
 
 Afin d'accéder à l'application, il est nécessaire d'avoir un compte utilisateur dans Keycloak. Nous devons pour cela initialiser la liaison avec Keycloak comme suit :
 
-````
+```
 export function initializeKeycloak(
   keycloak: KeycloakService
 ): () => Promise<boolean> {
